@@ -6,14 +6,14 @@
 
 ### Claude Code
 ```bash
-claude plugin marketplace add <你的-GitHub-帳號>/sixdots-skills
+claude plugin marketplace add SixdotsIT-RD/SkillUp
 claude plugin install sixdots-cheer@sixdots-skills
 ```
-(在 Claude 對話中也可用 `/plugin marketplace add …`、`/plugin install …`。)
+(在 Claude 對話中也可用 `/plugin marketplace add SixdotsIT-RD/SkillUp`、`/plugin install sixdots-cheer@sixdots-skills`。)
 
 ### Codex
 ```bash
-codex plugin marketplace add https://github.com/<你的-GitHub-帳號>/sixdots-skills
+codex plugin marketplace add https://github.com/SixdotsIT-RD/SkillUp
 ```
 之後在 Codex 的「外掛程式 → 個人」分頁即可看到並安裝。
 
