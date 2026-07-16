@@ -1,0 +1,5 @@
+{
+  "name": "changelog-writer",
+  "description": "Turns a set of code changes or commit messages into clear, user-facing changelog and release notes. Use when the user asks to draft a changelog, release notes, or a \"what's new\" summary, or mentions updating CHANGELOG.md.",
+  "version": "1.4.0"
+}

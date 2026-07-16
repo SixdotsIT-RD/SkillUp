@@ -1,0 +1,5 @@
+{
+  "name": "unit-test-writer",
+  "description": "Writes focused unit tests for a given function or module, covering happy path, edge cases, and failure modes. Use when the user asks to write tests, add test coverage, or mentions a testing framework like Jest, Vitest, or pytest.",
+  "version": "2.3.0"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "dockerfile-builder",
+  "description": "Generates a production-ready, multi-stage Dockerfile for a project, optimized for small image size, layer caching, and security. Use when the user asks to containerize an app, write a Dockerfile, or improve an existing one.",
+  "version": "1.0.0"
+}

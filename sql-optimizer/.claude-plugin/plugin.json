@@ -1,0 +1,5 @@
+{
+  "name": "sql-optimizer",
+  "description": "Analyzes slow SQL queries and suggests indexes, rewrites, and execution-plan improvements. Use when the user shares a slow query, asks to optimize SQL, tune a database, or mentions EXPLAIN / query performance.",
+  "version": "2.0.1"
+}
