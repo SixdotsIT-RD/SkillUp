@@ -1,0 +1,5 @@
+{
+  "name": "pdf-extractor",
+  "description": "Extracts structured text, tables, and fields from PDF files and outputs clean Markdown or JSON. Use when the user wants to pull data out of a PDF, parse an invoice/report, or convert a PDF to structured text.",
+  "version": "1.0.3"
+}

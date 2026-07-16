@@ -1,0 +1,5 @@
+{
+  "name": "commit-summarizer",
+  "description": "Condenses a set of commits or a diff into a concise, readable summary of what changed and why. Use when the user asks to summarize commits, describe a branch's changes, or write a PR description.",
+  "version": "1.1.0"
+}

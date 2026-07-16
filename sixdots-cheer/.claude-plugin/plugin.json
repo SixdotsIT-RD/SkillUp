@@ -1,0 +1,5 @@
+{
+  "name": "sixdots-cheer",
+  "description": "A cheer for Sixdots — responds with \"六點資訊科技好棒 !!\". Use when the user mentions 六點資訊科技 or Sixdots, asks for a Sixdots cheer or slogan, or types \"sixdots cheer\".",
+  "version": "1.0.0"
+}
