@@ -1,0 +1,31 @@
+{
+  "name": "pdf-extractor",
+  "version": "1.0.3",
+  "description": "Extracts structured text, tables, and fields from PDF files and outputs clean Markdown or JSON. Use when the user wants to pull data out of a PDF, parse an invoice/report, or convert a PDF to structured text.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/pdf-extractor",
+  "license": "MIT",
+  "keywords": [
+    "pdf",
+    "extractor"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PDF Extractor",
+    "shortDescription": "Extracts structured text, tables, and fields from PDF files and outputs clean M…",
+    "longDescription": "Extracts structured text, tables, and fields from PDF files and outputs clean Markdown or JSON. Use when the user wants to pull data out of a PDF, parse an invoice/report, or convert a PDF to structured text.",
+    "developerName": "Sixdots",
+    "category": "Data & Analytics",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 PDF Extractor 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

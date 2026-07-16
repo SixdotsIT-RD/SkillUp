@@ -1,0 +1,116 @@
+{
+  "name": "sixdots-skills",
+  "interface": {
+    "displayName": "Sixdots Skills"
+  },
+  "plugins": [
+    {
+      "name": "api-docs-generator",
+      "source": {
+        "source": "local",
+        "path": "./plugins/api-docs-generator"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "changelog-writer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/changelog-writer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "code-reviewer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/code-reviewer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "commit-summarizer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/commit-summarizer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "dockerfile-builder",
+      "source": {
+        "source": "local",
+        "path": "./plugins/dockerfile-builder"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "pdf-extractor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pdf-extractor"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Data & Analytics"
+    },
+    {
+      "name": "sixdots-cheer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/sixdots-cheer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "sql-optimizer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/sql-optimizer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Data & Analytics"
+    },
+    {
+      "name": "unit-test-writer",
+      "source": {
+        "source": "local",
+        "path": "./plugins/unit-test-writer"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "sql-optimizer",
+  "version": "2.0.1",
+  "description": "Analyzes slow SQL queries and suggests indexes, rewrites, and execution-plan improvements. Use when the user shares a slow query, asks to optimize SQL, tune a database, or mentions EXPLAIN / query performance.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/sql-optimizer",
+  "license": "MIT",
+  "keywords": [
+    "sql",
+    "optimizer"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SQL Optimizer",
+    "shortDescription": "Analyzes slow SQL queries and suggests indexes, rewrites, and execution-plan im…",
+    "longDescription": "Analyzes slow SQL queries and suggests indexes, rewrites, and execution-plan improvements. Use when the user shares a slow query, asks to optimize SQL, tune a database, or mentions EXPLAIN / query performance.",
+    "developerName": "Sixdots",
+    "category": "Data & Analytics",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 SQL Optimizer 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

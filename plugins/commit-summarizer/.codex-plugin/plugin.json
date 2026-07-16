@@ -1,0 +1,31 @@
+{
+  "name": "commit-summarizer",
+  "version": "1.1.0",
+  "description": "Condenses a set of commits or a diff into a concise, readable summary of what changed and why. Use when the user asks to summarize commits, describe a branch's changes, or write a PR description.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/commit-summarizer",
+  "license": "MIT",
+  "keywords": [
+    "commit",
+    "summarizer"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Commit Summarizer",
+    "shortDescription": "Condenses a set of commits or a diff into a concise, readable summary of what c…",
+    "longDescription": "Condenses a set of commits or a diff into a concise, readable summary of what changed and why. Use when the user asks to summarize commits, describe a branch's changes, or write a PR description.",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 Commit Summarizer 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

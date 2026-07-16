@@ -1,0 +1,31 @@
+{
+  "name": "dockerfile-builder",
+  "version": "1.0.0",
+  "description": "Generates a production-ready, multi-stage Dockerfile for a project, optimized for small image size, layer caching, and security. Use when the user asks to containerize an app, write a Dockerfile, or improve an existing one.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/dockerfile-builder",
+  "license": "MIT",
+  "keywords": [
+    "dockerfile",
+    "builder"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Dockerfile Builder",
+    "shortDescription": "Generates a production-ready, multi-stage Dockerfile for a project, optimized f…",
+    "longDescription": "Generates a production-ready, multi-stage Dockerfile for a project, optimized for small image size, layer caching, and security. Use when the user asks to containerize an app, write a Dockerfile, or improve an existing one.",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 Dockerfile Builder 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

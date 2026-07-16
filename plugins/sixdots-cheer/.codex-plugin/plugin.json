@@ -1,0 +1,31 @@
+{
+  "name": "sixdots-cheer",
+  "version": "1.0.0",
+  "description": "A cheer for Sixdots — responds with \"六點資訊科技好棒 !!\". Use when the user mentions 六點資訊科技 or Sixdots, asks for a Sixdots cheer or slogan, or types \"sixdots cheer\".",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/sixdots-cheer",
+  "license": "MIT",
+  "keywords": [
+    "sixdots",
+    "cheer"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Sixdots Cheer",
+    "shortDescription": "A cheer for Sixdots — responds with \"六點資訊科技好棒 !!\". Use when the user mentions 六…",
+    "longDescription": "A cheer for Sixdots — responds with \"六點資訊科技好棒 !!\". Use when the user mentions 六點資訊科技 or Sixdots, asks for a Sixdots cheer or slogan, or types \"sixdots cheer\".",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 Sixdots Cheer 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

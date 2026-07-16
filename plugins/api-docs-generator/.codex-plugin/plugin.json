@@ -1,0 +1,32 @@
+{
+  "name": "api-docs-generator",
+  "version": "1.2.0",
+  "description": "Reads source code and comments to generate REST API reference docs (endpoints, params, responses, examples). Use when the user asks to document an API, generate OpenAPI/Swagger, or write endpoint reference docs.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/api-docs-generator",
+  "license": "MIT",
+  "keywords": [
+    "api",
+    "docs",
+    "generator"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "API Docs Generator",
+    "shortDescription": "Reads source code and comments to generate REST API reference docs (endpoints,…",
+    "longDescription": "Reads source code and comments to generate REST API reference docs (endpoints, params, responses, examples). Use when the user asks to document an API, generate OpenAPI/Swagger, or write endpoint reference docs.",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 API Docs Generator 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

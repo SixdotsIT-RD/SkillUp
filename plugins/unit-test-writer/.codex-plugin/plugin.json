@@ -1,0 +1,32 @@
+{
+  "name": "unit-test-writer",
+  "version": "2.3.0",
+  "description": "Writes focused unit tests for a given function or module, covering happy path, edge cases, and failure modes. Use when the user asks to write tests, add test coverage, or mentions a testing framework like Jest, Vitest, or pytest.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/unit-test-writer",
+  "license": "MIT",
+  "keywords": [
+    "unit",
+    "test",
+    "writer"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Unit Test Writer",
+    "shortDescription": "Writes focused unit tests for a given function or module, covering happy path,…",
+    "longDescription": "Writes focused unit tests for a given function or module, covering happy path, edge cases, and failure modes. Use when the user asks to write tests, add test coverage, or mentions a testing framework like Jest, Vitest, or pytest.",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 Unit Test Writer 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

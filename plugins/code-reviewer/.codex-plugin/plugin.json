@@ -1,0 +1,31 @@
+{
+  "name": "code-reviewer",
+  "version": "1.5.2",
+  "description": "Reviews a diff or file for correctness bugs, security issues, and readability/maintainability, ranked by severity. Use when the user asks for a code review, to check a change, or to find bugs before merging.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "homepage": "https://github.com/SixdotsIT-RD/SkillUp",
+  "repository": "https://github.com/SixdotsIT-RD/SkillUp/tree/main/plugins/code-reviewer",
+  "license": "MIT",
+  "keywords": [
+    "code",
+    "reviewer"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Reviewer",
+    "shortDescription": "Reviews a diff or file for correctness bugs, security issues, and readability/m…",
+    "longDescription": "Reviews a diff or file for correctness bugs, security issues, and readability/maintainability, ranked by severity. Use when the user asks for a code review, to check a change, or to find bugs before merging.",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 Code Reviewer 幫我處理接下來的工作"
+    ],
+    "brandColor": "#2563EB"
+  }
+}
