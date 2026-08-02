@@ -48,6 +48,11 @@
       "version": "1.0.0"
     },
     {
+      "name": "skillup",
+      "source": "./skillup",
+      "description": "Connect to your SkillUp account to browse, install and keep your Agent Skills up to date."
+    },
+    {
       "name": "sql-optimizer",
       "source": "./sql-optimizer",
       "description": "Analyzes slow SQL queries and suggests indexes, rewrites, and execution-plan improvements. Use when the user shares a slow query, asks to optimize SQL, tune a database, or mentions EXPLAIN / query performance.",

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "skillup": {
+      "command": "skillup-mcp",
+      "args": []
+    }
+  }
+}

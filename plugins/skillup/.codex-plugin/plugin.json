@@ -1,0 +1,20 @@
+{
+  "name": "skillup",
+  "version": "0.1.0",
+  "description": "Connect to your SkillUp account to browse, install and keep your Agent Skills up to date. Use when the user asks about their SkillUp skills, wants to log in to SkillUp, list purchased or published skills, or check whether their skills need updating.",
+  "author": {
+    "name": "Sixdots"
+  },
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SkillUp",
+    "shortDescription": "Browse and sync your SkillUp Agent Skills",
+    "developerName": "Sixdots",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ]
+  }
+}

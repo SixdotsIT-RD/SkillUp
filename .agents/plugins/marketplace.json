@@ -89,6 +89,18 @@
       "category": "Productivity"
     },
     {
+      "name": "skillup",
+      "source": {
+        "source": "local",
+        "path": "./plugins/skillup"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "sql-optimizer",
       "source": {
         "source": "local",
