@@ -3238,8 +3238,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path10) {
-      let input = path10;
+    function removeDotSegments(path11) {
+      let input = path11;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -3491,8 +3491,8 @@ var require_schemes = __commonJS({
         wsComponent.secure = void 0;
       }
       if (wsComponent.resourceName) {
-        const [path10, query] = wsComponent.resourceName.split("?");
-        wsComponent.path = path10 && path10 !== "/" ? path10 : void 0;
+        const [path11, query] = wsComponent.resourceName.split("?");
+        wsComponent.path = path11 && path11 !== "/" ? path11 : void 0;
         wsComponent.query = query;
         wsComponent.resourceName = void 0;
       }
@@ -12580,12 +12580,12 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f;
     };
-    function addFormats(ajv, list, fs9, exportName) {
+    function addFormats(ajv, list, fs10, exportName) {
       var _a3;
       var _b;
       (_a3 = (_b = ajv.opts.code).formats) !== null && _a3 !== void 0 ? _a3 : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
       for (const f of list)
-        ajv.addFormat(f, fs9[f]);
+        ajv.addFormat(f, fs10[f]);
     }
     module2.exports = exports2 = formatsPlugin;
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -12645,8 +12645,8 @@ var init_errors = __esm({
 });
 
 // src/infrastructure/companion-api/transport/http.ts
-function apiUrl(baseUrl, path10) {
-  return `${baseUrl.replace(/\/+$/, "")}${API_PREFIX}${path10}`;
+function apiUrl(baseUrl, path11) {
+  return `${baseUrl.replace(/\/+$/, "")}${API_PREFIX}${path11}`;
 }
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -12661,8 +12661,8 @@ function backoffMs(attempt, retryAfter) {
   return 500 * 2 ** (attempt - 1) + Math.floor(Math.random() * 250);
 }
 async function requestJson(options2) {
-  const { baseUrl, path: path10, method = "GET", token, body, maxAttempts = 3 } = options2;
-  const url2 = apiUrl(baseUrl, path10);
+  const { baseUrl, path: path11, method = "GET", token, body, maxAttempts = 3 } = options2;
+  const url2 = apiUrl(baseUrl, path11);
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
@@ -12681,7 +12681,7 @@ async function requestJson(options2) {
           response.status,
           extractErrorCode(payload),
           url2,
-          `${method} ${path10} \u5931\u6557:HTTP ${response.status}`
+          `${method} ${path11} \u5931\u6557:HTTP ${response.status}`
         );
         if (isRetryable(error51) && attempt < maxAttempts) {
           lastError = error51;
@@ -12703,7 +12703,7 @@ async function requestJson(options2) {
       await delay(backoffMs(attempt));
     }
   }
-  throw lastError instanceof Error ? lastError : new Error(`${method} ${path10} \u5931\u6557:${String(lastError)}`);
+  throw lastError instanceof Error ? lastError : new Error(`${method} ${path11} \u5931\u6557:${String(lastError)}`);
 }
 var DEFAULT_BASE_URL, API_PREFIX;
 var init_http = __esm({
@@ -16100,7 +16100,7 @@ var require_parse = __commonJS({
 var require_gray_matter = __commonJS({
   "node_modules/gray-matter/index.js"(exports2, module2) {
     "use strict";
-    var fs9 = require("fs");
+    var fs10 = require("fs");
     var sections = require_section_matter();
     var defaults = require_defaults3();
     var stringify = require_stringify();
@@ -16184,7 +16184,7 @@ var require_gray_matter = __commonJS({
       return stringify(file2, data, options2);
     };
     matter2.read = function(filepath, options2) {
-      const str2 = fs9.readFileSync(filepath, "utf8");
+      const str2 = fs10.readFileSync(filepath, "utf8");
       const file2 = matter2(str2, options2);
       file2.path = filepath;
       return file2;
@@ -16231,8 +16231,8 @@ __export(packages_exports, {
 function sha256Hex(bytes) {
   return import_node_crypto5.default.createHash("sha256").update(bytes).digest("hex");
 }
-function guessMediaType(path10) {
-  const ext = path10.slice(path10.lastIndexOf(".")).toLowerCase();
+function guessMediaType(path11) {
+  const ext = path11.slice(path11.lastIndexOf(".")).toLowerCase();
   const table = {
     ".md": "text/markdown",
     ".txt": "text/plain",
@@ -16739,8 +16739,8 @@ function getErrorMap() {
 
 // node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
-  const { data, path: path10, errorMaps, issueData } = params;
-  const fullPath = [...path10, ...issueData.path || []];
+  const { data, path: path11, errorMaps, issueData } = params;
+  const fullPath = [...path11, ...issueData.path || []];
   const fullIssue = {
     ...issueData,
     path: fullPath
@@ -16855,11 +16855,11 @@ var errorUtil;
 
 // node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-  constructor(parent, value, path10, key) {
+  constructor(parent, value, path11, key) {
     this._cachedPath = [];
     this.parent = parent;
     this.data = value;
-    this._path = path10;
+    this._path = path11;
     this._key = key;
   }
   get path() {
@@ -20779,10 +20779,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path10) {
-  if (!path10)
+function getElementAtPath(obj, path11) {
+  if (!path11)
     return obj;
-  return path10.reduce((acc, key) => acc?.[key], obj);
+  return path11.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -21191,11 +21191,11 @@ function explicitlyAborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path10, issues) {
+function prefixIssues(path11, issues) {
   return issues.map((iss) => {
     var _a3;
     (_a3 = iss).path ?? (_a3.path = []);
-    iss.path.unshift(path10);
+    iss.path.unshift(path11);
     return iss;
   });
 }
@@ -21342,16 +21342,16 @@ function flattenError(error51, mapper = (issue2) => issue2.message) {
 }
 function formatError(error51, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error52, path10 = []) => {
+  const processError = (error52, path11 = []) => {
     for (const issue2 of error52.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path11, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else {
-        const fullpath = [...path10, ...issue2.path];
+        const fullpath = [...path11, ...issue2.path];
         if (fullpath.length === 0) {
           fieldErrors._errors.push(mapper(issue2));
         } else {
@@ -21378,17 +21378,17 @@ function formatError(error51, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error51, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error52, path10 = []) => {
+  const processError = (error52, path11 = []) => {
     var _a3, _b;
     for (const issue2 of error52.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path11, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else {
-        const fullpath = [...path10, ...issue2.path];
+        const fullpath = [...path11, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -21420,8 +21420,8 @@ function treeifyError(error51, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path10 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path10) {
+  const path11 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path11) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -34546,13 +34546,13 @@ function resolveRef(ref, ctx) {
   if (!ref.startsWith("#")) {
     throw new Error("External $ref is not supported, only local refs (#/...) are allowed");
   }
-  const path10 = ref.slice(1).split("/").filter(Boolean);
-  if (path10.length === 0) {
+  const path11 = ref.slice(1).split("/").filter(Boolean);
+  if (path11.length === 0) {
     return ctx.rootSchema;
   }
   const defsKey = ctx.version === "draft-2020-12" ? "$defs" : "definitions";
-  if (path10[0] === defsKey) {
-    const key = path10[1];
+  if (path11[0] === defsKey) {
+    const key = path11[1];
     if (!key || !ctx.defs[key]) {
       throw new Error(`Reference not found: ${ref}`);
     }
@@ -41478,6 +41478,17 @@ var SyncSkillsUseCase = class {
           toVersion: latest.version.toString(),
           versionId: latest.id
         });
+      } else {
+        const drifted = await this.installer.inspect(skill.name.value);
+        if (drifted.length > 0) {
+          changes.push({
+            skill,
+            action: "repair",
+            fromVersion: drifted.join("\u3001"),
+            toVersion: latest.version.toString(),
+            versionId: latest.id
+          });
+        }
       }
     }
     await this.notice?.record(changes.filter((c) => c.action === "update").map((c) => c.skill.name.value)).catch(() => void 0);
@@ -41494,7 +41505,9 @@ var SyncSkillsUseCase = class {
           skillId: change.skill.id,
           versionId: change.versionId,
           state: "installed",
-          operation: change.action,
+          // 契約的 lastOperation 只有 install/update/remove/verify,
+          // repair 的本質是「重新裝一次」,所以對外回報為 install。
+          operation: change.action === "update" ? "update" : "install",
           result: "succeeded"
         });
         outcomes.push({
@@ -41505,12 +41518,12 @@ var SyncSkillsUseCase = class {
         });
       } catch (error51) {
         const message = error51 instanceof Error ? error51.message : String(error51);
-        const stillInstalled = change.action === "update";
+        const stillInstalled = change.action !== "install";
         await this.reporter.report({
           skillId: change.skill.id,
           versionId: stillInstalled ? change.skill.installation.installedVersionId ?? null : null,
           state: stillInstalled ? "installed" : "not_installed",
-          operation: change.action,
+          operation: change.action === "update" ? "update" : "install",
           result: "failed"
         }).catch(() => void 0);
         outcomes.push({
@@ -41532,8 +41545,9 @@ var SyncSkillsUseCase = class {
 
 // src/infrastructure/companion-api/package.adapters.ts
 var import_node_crypto6 = __toESM(require("node:crypto"), 1);
-var import_promises6 = __toESM(require("node:fs/promises"), 1);
-var import_node_path9 = __toESM(require("node:path"), 1);
+var import_promises7 = __toESM(require("node:fs/promises"), 1);
+var import_node_fs6 = require("node:fs");
+var import_node_path10 = __toESM(require("node:path"), 1);
 
 // src/domain/skill/package-manifest.ts
 var ENTRYPOINT = "SKILL.md";
@@ -41575,8 +41589,8 @@ var PackageManifest = class _PackageManifest {
     return this.files.reduce((sum, file2) => sum + file2.sizeBytes, 0);
   }
   /** 依路徑找檔案;找不到回 undefined。下載驗證時用來比對「server 給的是不是我要的」。 */
-  find(path10) {
-    return this.files.find((file2) => file2.path.value === path10);
+  find(path11) {
+    return this.files.find((file2) => file2.path.value === path11);
   }
 };
 
@@ -41766,9 +41780,9 @@ function detectInstalledTools() {
 }
 
 // src/infrastructure/local-install/install.ts
-var import_promises4 = __toESM(require("node:fs/promises"), 1);
+var import_promises5 = __toESM(require("node:fs/promises"), 1);
 var import_node_fs4 = require("node:fs");
-var import_node_path6 = __toESM(require("node:path"), 1);
+var import_node_path7 = __toESM(require("node:path"), 1);
 
 // src/infrastructure/local-install/hash.ts
 var import_node_crypto4 = __toESM(require("node:crypto"), 1);
@@ -41819,6 +41833,104 @@ function isoTimestamp(date5 = /* @__PURE__ */ new Date()) {
   return date5.toISOString();
 }
 
+// src/infrastructure/local-install/file-lock.ts
+var import_promises4 = __toESM(require("node:fs/promises"), 1);
+var import_node_path6 = __toESM(require("node:path"), 1);
+var WAIT_TIMEOUT_MS = 1e4;
+var RETRY_INTERVAL_MS = 100;
+var STALE_AFTER_MS = 6e4;
+var heldLocks = /* @__PURE__ */ new Map();
+function lockPath(name) {
+  return resolveHome(".skillup", `${name}.lock`);
+}
+function delay3(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+function isProcessAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error51) {
+    return error51.code === "EPERM";
+  }
+}
+async function readLock(file2) {
+  try {
+    const raw = await import_promises4.default.readFile(file2, "utf8");
+    const data = JSON.parse(raw);
+    return typeof data.pid === "number" ? data : void 0;
+  } catch {
+    return void 0;
+  }
+}
+async function tryAcquire(file2) {
+  const data = { pid: process.pid, acquiredAt: Date.now() };
+  try {
+    await import_promises4.default.mkdir(import_node_path6.default.dirname(file2), { recursive: true });
+    await import_promises4.default.writeFile(file2, JSON.stringify(data), { flag: "wx" });
+    return true;
+  } catch (error51) {
+    if (error51.code !== "EEXIST") {
+      throw error51;
+    }
+    return false;
+  }
+}
+async function clearIfStale(file2) {
+  const data = await readLock(file2);
+  if (data === void 0) {
+    await import_promises4.default.rm(file2, { force: true });
+    return;
+  }
+  const age = Date.now() - data.acquiredAt;
+  if (age > STALE_AFTER_MS && !isProcessAlive(data.pid)) {
+    await import_promises4.default.rm(file2, { force: true });
+  }
+}
+async function withLock(name, work, options2 = {}) {
+  const depth = heldLocks.get(name);
+  if (depth !== void 0) {
+    heldLocks.set(name, depth + 1);
+    try {
+      return await work();
+    } finally {
+      const current = heldLocks.get(name) ?? 1;
+      if (current <= 1) {
+        heldLocks.delete(name);
+      } else {
+        heldLocks.set(name, current - 1);
+      }
+    }
+  }
+  const file2 = lockPath(name);
+  const deadline = Date.now() + WAIT_TIMEOUT_MS;
+  let notified = false;
+  for (; ; ) {
+    if (await tryAcquire(file2)) {
+      break;
+    }
+    if (!notified) {
+      notified = true;
+      options2.onWait?.((await readLock(file2))?.pid);
+    }
+    await clearIfStale(file2);
+    if (Date.now() > deadline) {
+      const holder = await readLock(file2);
+      throw new Error(
+        `\u7B49\u5F85 SkillUp \u7684\u300C${name}\u300D\u9396\u903E\u6642\u3002` + (holder ? `\u76EE\u524D\u7531\u7A0B\u5E8F ${holder.pid} \u6301\u6709 \u2014\u2014 ` : "") + `\u53EF\u80FD\u6709\u53E6\u4E00\u500B SkillUp \u6B63\u5728\u57F7\u884C;\u82E5\u78BA\u5B9A\u6C92\u6709,\u53EF\u522A\u9664 ${file2} \u5F8C\u91CD\u8A66\u3002`
+      );
+    }
+    await delay3(RETRY_INTERVAL_MS);
+  }
+  heldLocks.set(name, 1);
+  try {
+    return await work();
+  } finally {
+    heldLocks.delete(name);
+    await import_promises4.default.rm(file2, { force: true }).catch(() => void 0);
+  }
+}
+
 // src/infrastructure/local-install/lockfile.ts
 var LOCKFILE_VERSION = 1;
 function getLockfilePath() {
@@ -41841,17 +41953,23 @@ function findInstallation(lockfile, skill, toolId) {
     (item) => item.skill === skill && item.toolId === toolId
   );
 }
-async function recordInstallation(entry) {
-  const lockfile = await readLockfile();
-  const index = lockfile.installations.findIndex(
-    (item) => item.skill === entry.skill && item.toolId === entry.toolId
+async function recordInstallation(entry, options2) {
+  await withLock(
+    "install",
+    async () => {
+      const lockfile = await readLockfile();
+      const index = lockfile.installations.findIndex(
+        (item) => item.skill === entry.skill && item.toolId === entry.toolId
+      );
+      if (index >= 0) {
+        lockfile.installations[index] = entry;
+      } else {
+        lockfile.installations.push(entry);
+      }
+      await writeLockfile(lockfile);
+    },
+    options2 ?? {}
   );
-  if (index >= 0) {
-    lockfile.installations[index] = entry;
-  } else {
-    lockfile.installations.push(entry);
-  }
-  await writeLockfile(lockfile);
 }
 function makeInstallation(params) {
   return {
@@ -41863,27 +41981,27 @@ function makeInstallation(params) {
 
 // src/infrastructure/local-install/install.ts
 async function replaceFolderAtomically(sourceDir, targetDir) {
-  const parent = import_node_path6.default.dirname(targetDir);
-  await import_promises4.default.mkdir(parent, { recursive: true });
+  const parent = import_node_path7.default.dirname(targetDir);
+  await import_promises5.default.mkdir(parent, { recursive: true });
   const tempDir = `${targetDir}.skillup-tmp`;
   const backupDir = `${targetDir}.skillup-old`;
-  await import_promises4.default.rm(tempDir, { recursive: true, force: true });
-  await import_promises4.default.cp(sourceDir, tempDir, { recursive: true });
+  await import_promises5.default.rm(tempDir, { recursive: true, force: true });
+  await import_promises5.default.cp(sourceDir, tempDir, { recursive: true });
   const targetExists = (0, import_node_fs4.existsSync)(targetDir);
   if (targetExists) {
-    await import_promises4.default.rm(backupDir, { recursive: true, force: true });
-    await import_promises4.default.rename(targetDir, backupDir);
+    await import_promises5.default.rm(backupDir, { recursive: true, force: true });
+    await import_promises5.default.rename(targetDir, backupDir);
   }
   try {
-    await import_promises4.default.rename(tempDir, targetDir);
+    await import_promises5.default.rename(tempDir, targetDir);
   } catch (error51) {
     if (targetExists) {
-      await import_promises4.default.rename(backupDir, targetDir).catch(() => void 0);
+      await import_promises5.default.rename(backupDir, targetDir).catch(() => void 0);
     }
     throw error51;
   }
   if (targetExists) {
-    await import_promises4.default.rm(backupDir, { recursive: true, force: true });
+    await import_promises5.default.rm(backupDir, { recursive: true, force: true });
   }
 }
 async function installSkill(skill, tool) {
@@ -41913,36 +42031,36 @@ async function installSkill(skill, tool) {
 }
 
 // src/infrastructure/local-install/materialize.ts
-var import_promises5 = __toESM(require("node:fs/promises"), 1);
+var import_promises6 = __toESM(require("node:fs/promises"), 1);
 var import_node_os3 = __toESM(require("node:os"), 1);
-var import_node_path7 = __toESM(require("node:path"), 1);
+var import_node_path8 = __toESM(require("node:path"), 1);
 async function materializePackage(skillName, files) {
-  const root = await import_promises5.default.mkdtemp(import_node_path7.default.join(import_node_os3.default.tmpdir(), "skillup-pkg-"));
-  const dir = import_node_path7.default.join(root, skillName);
-  await import_promises5.default.mkdir(dir, { recursive: true });
+  const root = await import_promises6.default.mkdtemp(import_node_path8.default.join(import_node_os3.default.tmpdir(), "skillup-pkg-"));
+  const dir = import_node_path8.default.join(root, skillName);
+  await import_promises6.default.mkdir(dir, { recursive: true });
   for (const file2 of files) {
     const safe = PackagePath.create(file2.path);
-    const target = import_node_path7.default.join(dir, ...safe.value.split("/"));
-    const resolved = import_node_path7.default.resolve(target);
-    if (resolved !== import_node_path7.default.resolve(dir) && !resolved.startsWith(import_node_path7.default.resolve(dir) + import_node_path7.default.sep)) {
+    const target = import_node_path8.default.join(dir, ...safe.value.split("/"));
+    const resolved = import_node_path8.default.resolve(target);
+    if (resolved !== import_node_path8.default.resolve(dir) && !resolved.startsWith(import_node_path8.default.resolve(dir) + import_node_path8.default.sep)) {
       throw new Error(`\u62D2\u7D55\u5BEB\u5165 skill \u8CC7\u6599\u593E\u4E4B\u5916\u7684\u8DEF\u5F91:${file2.path}`);
     }
-    await import_promises5.default.mkdir(import_node_path7.default.dirname(target), { recursive: true });
-    await import_promises5.default.writeFile(target, file2.bytes);
+    await import_promises6.default.mkdir(import_node_path8.default.dirname(target), { recursive: true });
+    await import_promises6.default.writeFile(target, file2.bytes);
   }
   return {
     dir,
-    cleanup: () => import_promises5.default.rm(root, { recursive: true, force: true })
+    cleanup: () => import_promises6.default.rm(root, { recursive: true, force: true })
   };
 }
 
 // src/infrastructure/skill-source/parse.ts
 var import_node_fs5 = __toESM(require("node:fs"), 1);
-var import_node_path8 = __toESM(require("node:path"), 1);
+var import_node_path9 = __toESM(require("node:path"), 1);
 var import_gray_matter = __toESM(require_gray_matter(), 1);
 var NAME_PATTERN = /^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$/;
 function readSkill(dir) {
-  const skillFile = import_node_path8.default.join(dir, "SKILL.md");
+  const skillFile = import_node_path9.default.join(dir, "SKILL.md");
   if (!import_node_fs5.default.existsSync(skillFile)) {
     throw new Error(`\u8CC7\u6599\u593E\u7F3A\u5C11 SKILL.md:${dir}`);
   }
@@ -41957,7 +42075,7 @@ function readSkill(dir) {
   if (!NAME_PATTERN.test(name)) {
     throw new Error(`name \u683C\u5F0F\u4E0D\u5408\u6CD5(\u9808\u5C0F\u5BEB\u82F1\u6578\u8207\u9023\u5B57\u865F,1\u201364 \u5B57):"${name}" @ ${skillFile}`);
   }
-  const folderName = import_node_path8.default.basename(dir);
+  const folderName = import_node_path9.default.basename(dir);
   if (name !== folderName) {
     throw new Error(`name("${name}")\u5FC5\u9808\u7B49\u65BC\u8CC7\u6599\u593E\u540D("${folderName}"):${skillFile}`);
   }
@@ -42021,27 +42139,62 @@ var CompanionPackageSource = class {
   }
 };
 var LocalToolInstaller = class {
+  /** 等待其他程序時的通知(由 composition root 注入,讓 CLI 能顯示「等待中」)。 */
+  constructor(onWait) {
+    this.onWait = onWait;
+  }
+  onWait;
   async install(pkg) {
-    const materialized = await materializePackage(pkg.skillName, pkg.files);
-    try {
-      const manifest = readSkill(materialized.dir);
-      const results = [];
-      for (const detection of detectInstalledTools()) {
-        if (!detection.installed) {
-          continue;
+    return withLock(
+      "install",
+      async () => {
+        const materialized = await materializePackage(pkg.skillName, pkg.files);
+        try {
+          const manifest = readSkill(materialized.dir);
+          const results = [];
+          for (const detection of detectInstalledTools()) {
+            if (!detection.installed) {
+              continue;
+            }
+            const result = await installSkill(manifest, detection.tool);
+            results.push({
+              toolId: detection.tool.id,
+              toolName: detection.tool.displayName,
+              targetDir: result.targetDir,
+              action: result.action
+            });
+          }
+          return results;
+        } finally {
+          await materialized.cleanup();
         }
-        const result = await installSkill(manifest, detection.tool);
-        results.push({
-          toolId: detection.tool.id,
-          toolName: detection.tool.displayName,
-          targetDir: result.targetDir,
-          action: result.action
-        });
+      },
+      { onWait: this.onWait }
+    );
+  }
+  /**
+   * 比對本機各工具的副本與安裝紀錄是否一致。
+   *
+   * 用「內容雜湊」而非「檔案存在與否」來判斷,才抓得到「檔案還在但被改過」——
+   * 那是最容易被忽略、也最容易讓 skill 行為悄悄改變的情況。
+   */
+  async inspect(skillName) {
+    const lockfile = await readLockfile();
+    const drifted = [];
+    for (const detection of detectInstalledTools()) {
+      if (!detection.installed) {
+        continue;
       }
-      return results;
-    } finally {
-      await materialized.cleanup();
+      const record2 = findInstallation(lockfile, skillName, detection.tool.id);
+      if (record2 === void 0) {
+        continue;
+      }
+      const intact = (0, import_node_fs6.existsSync)(record2.installedPath) && await hashFolder(record2.installedPath) === record2.hash;
+      if (!intact) {
+        drifted.push(detection.tool.displayName);
+      }
     }
+    return drifted;
   }
 };
 var CompanionInstallationReporter = class {
@@ -42130,16 +42283,16 @@ var CompanionPublisher = class {
 async function collectFiles(root) {
   const files = [];
   async function walk(dir, prefix) {
-    for (const entry of await import_promises6.default.readdir(dir, { withFileTypes: true })) {
+    for (const entry of await import_promises7.default.readdir(dir, { withFileTypes: true })) {
       if (entry.name === ".DS_Store" || entry.name === ".git") {
         continue;
       }
-      const full = import_node_path9.default.join(dir, entry.name);
+      const full = import_node_path10.default.join(dir, entry.name);
       const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
       if (entry.isDirectory()) {
         await walk(full, rel);
       } else if (entry.isFile()) {
-        files.push({ path: rel, bytes: await import_promises6.default.readFile(full) });
+        files.push({ path: rel, bytes: await import_promises7.default.readFile(full) });
       }
     }
   }
@@ -42163,6 +42316,18 @@ function stableKey(...parts) {
     hex3.slice(16, 20),
     hex3.slice(20, 32)
   ].join("-");
+}
+
+// src/infrastructure/local-install/update-cache.ts
+function getUpdateCachePath() {
+  return resolveHome(".skillup", "update-cache.json");
+}
+async function writeUpdateCache(updatable) {
+  await writeJsonAtomic(getUpdateCachePath(), {
+    updatable: [...updatable],
+    checkedAt: isoTimestamp(),
+    checkedAtHuman: humanTimestamp()
+  });
 }
 
 // src/infrastructure/composition.ts
@@ -42195,7 +42360,11 @@ async function buildAuthenticatedContext() {
     listSkills: new ListSkillsUseCase(catalog),
     account: new CompanionAccountAdapter(state.baseUrl),
     unlinkDevice: new UnlinkDeviceUseCase(authorization, credentials),
-    syncSkills: new SyncSkillsUseCase(catalog, source, new LocalToolInstaller(), reporter),
+    syncSkills: new SyncSkillsUseCase(catalog, source, new LocalToolInstaller(), reporter, {
+      // UpdateNoticePort 的實作只有一行,不值得為它開一個 class ——
+      // 直接用物件字面值滿足介面即可(這也是介面只留一個方法的好處)。
+      record: (updatable) => writeUpdateCache(updatable)
+    }),
     publisher: new CompanionPublisher(state.baseUrl, credential)
   };
 }
@@ -42403,9 +42572,15 @@ server.registerTool(
       if (changes.length === 0) {
         return text(skill ? `${skill} \u5DF2\u662F\u6700\u65B0\u3002` : "\u5168\u90E8\u90FD\u662F\u6700\u65B0\u7684,\u6C92\u6709\u8981\u8655\u7406\u7684\u9805\u76EE\u3002");
       }
-      const plan = changes.map(
-        (c) => c.action === "install" ? `  \xB7 ${c.skill.name.value} \u2014 \u5B89\u88DD ${c.toVersion}` : `  \xB7 ${c.skill.name.value} \u2014 \u66F4\u65B0 ${c.fromVersion ?? "?"} \u2192 ${c.toVersion}`
-      ).join("\n");
+      const plan = changes.map((c) => {
+        if (c.action === "install") {
+          return `  \xB7 ${c.skill.name.value} \u2014 \u5B89\u88DD ${c.toVersion}`;
+        }
+        if (c.action === "repair") {
+          return `  \xB7 ${c.skill.name.value} \u2014 \u4FEE\u5FA9 ${c.toVersion}(${c.fromVersion} \u7684\u6A94\u6848\u88AB\u6539\u904E\u6216\u907A\u5931)`;
+        }
+        return `  \xB7 ${c.skill.name.value} \u2014 \u66F4\u65B0 ${c.fromVersion ?? "?"} \u2192 ${c.toVersion}`;
+      }).join("\n");
       if (confirm !== true) {
         return text(
           `\u4EE5\u4E0B\u662F\u6253\u7B97\u505A\u7684\u4E8B(\u5C1A\u672A\u57F7\u884C\u4EFB\u4F55\u52D5\u4F5C):
