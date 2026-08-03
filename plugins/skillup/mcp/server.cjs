@@ -41543,6 +41543,70 @@ var SyncSkillsUseCase = class {
   }
 };
 
+// src/application/use-cases/remove-skill.use-case.ts
+var RemoveSkillUseCase = class {
+  constructor(catalog, installer, reporter) {
+    this.catalog = catalog;
+    this.installer = installer;
+    this.reporter = reporter;
+  }
+  catalog;
+  installer;
+  reporter;
+  /**
+   * 算出「會刪掉什麼」,但**不動任何東西**。
+   *
+   * 找 skillId 時容忍失敗:skill 可能是從本機目錄裝的、根本不在帳號裡。
+   * 那種情況照樣可以移除,只是沒有對象可以回報。
+   */
+  async plan(skillName) {
+    const targets = await this.installer.locate(skillName);
+    let skillId;
+    try {
+      const skills = await this.catalog.listSkills();
+      skillId = skills.find((skill) => skill.name.value === skillName)?.id;
+    } catch {
+      skillId = void 0;
+    }
+    return {
+      skillName,
+      skillId,
+      targets,
+      hasLocalChanges: targets.some((target) => target.locallyModified)
+    };
+  }
+  /**
+   * 真的移除。
+   *
+   * 【順序:先刪本機,再回報 server】
+   *   回報是「陳述已經發生的事實」,所以必須在事情真的發生之後。
+   *   反過來先回報的話,若刪除失敗,server 的狀態就與現實不符了。
+   */
+  async execute(plan) {
+    const removed = await this.installer.remove(plan.skillName);
+    if (plan.skillId === void 0 || removed.length === 0) {
+      return { skillName: plan.skillName, removed };
+    }
+    try {
+      await this.reporter.report({
+        skillId: plan.skillId,
+        // 契約規定:not_installed 時 installedSkillVersionId 必須是 null。
+        versionId: null,
+        state: "not_installed",
+        operation: "remove",
+        result: "succeeded"
+      });
+      return { skillName: plan.skillName, removed };
+    } catch (error51) {
+      return {
+        skillName: plan.skillName,
+        removed,
+        reportError: error51 instanceof Error ? error51.message : String(error51)
+      };
+    }
+  }
+};
+
 // src/infrastructure/companion-api/package.adapters.ts
 var import_node_crypto6 = __toESM(require("node:crypto"), 1);
 var import_promises7 = __toESM(require("node:fs/promises"), 1);
@@ -41971,6 +42035,27 @@ async function recordInstallation(entry, options2) {
     options2 ?? {}
   );
 }
+async function removeInstallations(skill, toolIds, options2) {
+  return withLock(
+    "install",
+    async () => {
+      const lockfile = await readLockfile();
+      const before = lockfile.installations.length;
+      lockfile.installations = lockfile.installations.filter((item) => {
+        if (item.skill !== skill) {
+          return true;
+        }
+        return toolIds !== void 0 && !toolIds.includes(item.toolId);
+      });
+      const removed = before - lockfile.installations.length;
+      if (removed > 0) {
+        await writeLockfile(lockfile);
+      }
+      return removed;
+    },
+    options2 ?? {}
+  );
+}
 function makeInstallation(params) {
   return {
     ...params,
@@ -42173,6 +42258,54 @@ var LocalToolInstaller = class {
     );
   }
   /**
+   * 找出這個 skill 在本機的所有副本。**唯讀**,不刪任何東西。
+   *
+   * 「使用者改過沒有」是靠內容雜湊比對出來的:安裝當下記下的 hash 與現在算出來的
+   * 若不同,就代表檔案被動過。這件事只有在刪除前講出來才有意義 —— 刪完就來不及了。
+   */
+  async locate(skillName) {
+    const lockfile = await readLockfile();
+    const targets = [];
+    for (const detection of detectInstalledTools()) {
+      const record2 = findInstallation(lockfile, skillName, detection.tool.id);
+      if (record2 === void 0) {
+        continue;
+      }
+      const missing = !(0, import_node_fs6.existsSync)(record2.installedPath);
+      targets.push({
+        toolId: detection.tool.id,
+        toolName: detection.tool.displayName,
+        path: record2.installedPath,
+        // 檔案不見了就談不上「被修改」,避免同時亮兩個警告造成混淆。
+        locallyModified: !missing && await hashFolder(record2.installedPath) !== record2.hash,
+        missing
+      });
+    }
+    return targets;
+  }
+  /**
+   * 從本機移除:刪掉各工具目錄的副本,再清掉安裝紀錄。
+   *
+   * 【順序是規則:先刪檔案,再清紀錄】
+   *   反過來的話,若刪檔案時失敗,紀錄已經沒了 —— 使用者的磁碟上留著一份
+   *   SkillUp 再也不認得的殘檔,連 status 都看不到它。
+   *   照這個順序,最壞情況是「檔案刪了但紀錄還在」,下次 status 會顯示「已遺失」,
+   *   使用者仍看得到、也還能處理。**寧可留下看得見的不一致,也不要留下看不見的垃圾。**
+   */
+  async remove(skillName) {
+    return withLock("install", async () => {
+      const targets = await this.locate(skillName);
+      for (const target of targets) {
+        await import_promises7.default.rm(target.path, { recursive: true, force: true });
+      }
+      await removeInstallations(
+        skillName,
+        targets.map((target) => target.toolId)
+      );
+      return targets;
+    });
+  }
+  /**
    * 比對本機各工具的副本與安裝紀錄是否一致。
    *
    * 用「內容雜湊」而非「檔案存在與否」來判斷,才抓得到「檔案還在但被改過」——
@@ -42369,6 +42502,7 @@ async function buildAuthenticatedContext() {
   const authorization = new CompanionAuthorizationAdapter(state.baseUrl);
   const source = new CompanionPackageSource(state.baseUrl, credential);
   const reporter = new CompanionInstallationReporter(state.baseUrl, credential);
+  const installer = new LocalToolInstaller();
   return {
     baseUrl: state.baseUrl,
     credential,
@@ -42376,12 +42510,13 @@ async function buildAuthenticatedContext() {
     listSkills: new ListSkillsUseCase(catalog),
     account: new CompanionAccountAdapter(state.baseUrl),
     unlinkDevice: new UnlinkDeviceUseCase(authorization, credentials),
-    syncSkills: new SyncSkillsUseCase(catalog, source, new LocalToolInstaller(), reporter, {
+    syncSkills: new SyncSkillsUseCase(catalog, source, installer, reporter, {
       // UpdateNoticePort 的實作只有一行,不值得為它開一個 class ——
       // 直接用物件字面值滿足介面即可(這也是介面只留一個方法的好處)。
       record: (updatable) => writeUpdateCache(updatable)
     }),
-    publisher: new CompanionPublisher(state.baseUrl, credential)
+    publisher: new CompanionPublisher(state.baseUrl, credential),
+    removeSkill: new RemoveSkillUseCase(catalog, installer, reporter)
   };
 }
 
@@ -42658,6 +42793,52 @@ server.registerTool(
       );
     } catch (error51) {
       return text(`\u767C\u5E03\u5931\u6557:${describeError(error51)}`);
+    }
+  }
+);
+server.registerTool(
+  "skillup_remove",
+  {
+    title: "\u5F9E\u9019\u53F0\u6A5F\u5668\u79FB\u9664 Skill",
+    description: "\u628A\u4E00\u500B skill \u5F9E\u672C\u6A5F\u6240\u6709 AI \u5DE5\u5177\u76EE\u9304\u522A\u9664,\u4E26\u6E05\u9664\u5B89\u88DD\u7D00\u9304\u3002\u9810\u8A2D\u53EA\u56DE\u5831\u300C\u6703\u522A\u6389\u4EC0\u9EBC\u300D\u800C\u4E0D\u5BE6\u969B\u522A\u9664;\u8981\u771F\u7684\u79FB\u9664\u5FC5\u9808\u5E36 confirm=true\u3002\u82E5\u56DE\u5831\u4E2D\u51FA\u73FE\u300C\u5DF2\u88AB\u4F7F\u7528\u8005\u4FEE\u6539\u300D\u7684\u526F\u672C,\u52D9\u5FC5\u7279\u5225\u63D0\u9192\u4F7F\u7528\u8005:\u79FB\u9664\u6703\u9023\u540C\u4ED6\u7684\u4FEE\u6539\u4E00\u8D77\u522A\u6389\u4E14\u7121\u6CD5\u5FA9\u539F\u3002",
+    inputSchema: {
+      skill: external_exports.string().describe("\u8981\u79FB\u9664\u7684 skill \u540D\u7A31"),
+      confirm: external_exports.boolean().optional().describe("true \u624D\u6703\u5BE6\u969B\u522A\u9664\u6A94\u6848\u3002\u522A\u9664\u4E0D\u53EF\u9006,\u52D9\u5FC5\u5148\u8B93\u4F7F\u7528\u8005\u78BA\u8A8D\u3002")
+    }
+  },
+  async ({ skill, confirm }) => {
+    const context = await buildAuthenticatedContext();
+    if (context === void 0) {
+      return text(NOT_LINKED);
+    }
+    try {
+      const plan = await context.removeSkill.plan(skill);
+      if (plan.targets.length === 0) {
+        return text(`\u300C${skill}\u300D\u5728\u9019\u53F0\u6A5F\u5668\u4E0A\u6C92\u6709\u5B89\u88DD\u7D00\u9304,\u4E0D\u9700\u8981\u79FB\u9664\u3002`);
+      }
+      const listing = plan.targets.map((target) => {
+        const state = target.missing ? "\u5DF2\u4E0D\u5B58\u5728" : target.locallyModified ? "\u26A0 \u5DF2\u88AB\u4F7F\u7528\u8005\u4FEE\u6539" : "\u672A\u4FEE\u6539";
+        return `  \xB7 ${target.toolName}(${state})\u2014 ${target.path}`;
+      });
+      if (confirm !== true) {
+        return text(
+          [
+            "\u5C07\u6703\u522A\u9664\u4EE5\u4E0B\u4F4D\u7F6E(\u5C1A\u672A\u522A\u9664\u4EFB\u4F55\u6771\u897F):",
+            ...listing,
+            ...plan.hasLocalChanges ? ["", "\u26A0 \u5176\u4E2D\u6709\u526F\u672C\u88AB\u4F7F\u7528\u8005\u6539\u904E \u2014\u2014 \u79FB\u9664\u6703\u9023\u540C\u4FEE\u6539\u4E00\u8D77\u522A\u6389,\u4E14\u7121\u6CD5\u5FA9\u539F\u3002"] : [],
+            "",
+            "\u8ACB\u628A\u4EE5\u4E0A\u5167\u5BB9\u986F\u793A\u7D66\u4F7F\u7528\u8005\u78BA\u8A8D\u3002\u5F97\u5230\u540C\u610F\u5F8C,\u518D\u5E36 confirm=true \u547C\u53EB\u4E00\u6B21\u3002"
+          ].join("\n")
+        );
+      }
+      const report = await context.removeSkill.execute(plan);
+      const lines = [`\u2714 \u5DF2\u5F9E ${report.removed.length} \u500B\u5DE5\u5177\u76EE\u9304\u79FB\u9664 ${report.skillName}`];
+      if (report.reportError) {
+        lines.push(`\u26A0 \u672C\u6A5F\u5DF2\u79FB\u9664,\u4F46\u56DE\u5831\u4F3A\u670D\u5668\u5931\u6557:${report.reportError}`);
+      }
+      return text(lines.join("\n"));
+    } catch (error51) {
+      return text(`\u79FB\u9664\u5931\u6557:${describeError(error51)}`);
     }
   }
 );

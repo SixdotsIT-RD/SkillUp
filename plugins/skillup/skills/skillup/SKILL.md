@@ -26,6 +26,7 @@ Use these tools when the user:
 | `skillup_status` | Shows which AI tools are installed locally and what is installed where | No |
 | `skillup_sync` | Downloads, verifies and installs pending skills (also repairs locally modified/missing copies) | Yes — requires `confirm: true` |
 | `skillup_publish` | Uploads a local skill folder to the user's account as a new version | Yes — requires `confirm: true` |
+| `skillup_remove` | Deletes a skill from every local tool directory | Yes — requires `confirm: true` |
 
 ## How to handle "not linked"
 
@@ -34,8 +35,11 @@ It opens the system browser; tell the user to approve the request there, then re
 
 ## Confirming destructive actions
 
-`skillup_sync` and `skillup_publish` change things — one writes files to disk, the other
-creates a permanent version in the user's account. Both default to a dry run.
+`skillup_sync`, `skillup_publish` and `skillup_remove` change things — they write files,
+create a permanent version, or delete files. All three default to a dry run.
+
+`skillup_remove` deserves extra care: if its dry run reports a copy as **modified by the user**,
+say so explicitly before asking for confirmation. Those edits are lost permanently.
 
 Always call them **without** `confirm` first, show the returned plan to the user, and only
 call again with `confirm: true` after they agree. Never pass `confirm: true` on the first
