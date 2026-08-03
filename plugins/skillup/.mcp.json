@@ -1,8 +1,11 @@
 {
   "mcpServers": {
     "skillup": {
-      "command": "skillup-mcp",
-      "args": []
+      "command": "node",
+      "args": [
+        "server.cjs"
+      ],
+      "cwd": "mcp"
     }
   }
 }
