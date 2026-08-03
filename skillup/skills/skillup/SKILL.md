@@ -24,15 +24,24 @@ Use these tools when the user:
 | `skillup_whoami` | Confirms the stored credential is still valid | No |
 | `skillup_skills` | Lists the skills in the user's account and their status on this device | No |
 | `skillup_status` | Shows which AI tools are installed locally and what is installed where | No |
-| `skillup_sync` | Downloads and installs pending skills | Yes — not implemented yet |
+| `skillup_sync` | Downloads, verifies and installs pending skills (also repairs locally modified/missing copies) | Yes — requires `confirm: true` |
+| `skillup_publish` | Uploads a local skill folder to the user's account as a new version | Yes — requires `confirm: true` |
 
 ## How to handle "not linked"
 
 If any tool reports that the device is not linked, call `skillup_login` first.
 It opens the system browser; tell the user to approve the request there, then retry.
 
+## Confirming destructive actions
+
+`skillup_sync` and `skillup_publish` change things — one writes files to disk, the other
+creates a permanent version in the user's account. Both default to a dry run.
+
+Always call them **without** `confirm` first, show the returned plan to the user, and only
+call again with `confirm: true` after they agree. Never pass `confirm: true` on the first
+call, even if the user's request sounds decisive.
+
 ## Notes
 
 - The credential lives in the operating system's secure store, never in a plain file.
-- `skillup_sync` is not implemented yet. If the user asks to install skills from their
-  account, say so plainly rather than pretending it worked.
+- Skills install into every AI tool detected on this machine, so one sync covers them all.

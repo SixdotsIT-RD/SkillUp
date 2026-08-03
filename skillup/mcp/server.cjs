@@ -42224,18 +42224,34 @@ var CompanionPublisher = class {
   }
   baseUrl;
   credential;
-  async publish(sourceDir) {
+  /**
+   * 讀出將要上傳的內容並跑完領域驗證,但不碰網路。
+   * publish() 也走這一步 —— 兩者共用同一份驗證,不會出現「預覽過了卻上傳失敗」。
+   */
+  async preview(sourceDir) {
     const skill = readSkill(sourceDir);
     const files = await collectFiles(sourceDir);
+    const described = describeFiles(files);
     PackageManifest.create({
       version: SemanticVersion.create(skill.version),
-      files: describeFiles(files).map((file2) => ({
+      files: described.map((file2) => ({
         path: PackagePath.create(file2.path),
         sizeBytes: file2.sizeBytes,
         sha256: Sha256.create(file2.sha256),
         mediaType: file2.mediaType
       }))
     });
+    return {
+      name: skill.name,
+      version: skill.version,
+      sourceDir,
+      files: described.map((file2) => ({ path: file2.path, sizeBytes: file2.sizeBytes }))
+    };
+  }
+  async publish(sourceDir) {
+    await this.preview(sourceDir);
+    const skill = readSkill(sourceDir);
+    const files = await collectFiles(sourceDir);
     const skillId = await this.resolveSkillId(sourceDir, skill);
     const manifest = {
       schemaVersion: 1,
@@ -42597,6 +42613,51 @@ ${plan}
       return text(lines.join("\n"));
     } catch (error51) {
       return text(`\u540C\u6B65\u5931\u6557:${describeError(error51)}`);
+    }
+  }
+);
+server.registerTool(
+  "skillup_publish",
+  {
+    title: "\u628A\u672C\u6A5F\u7684 Skill \u767C\u5E03\u5230\u5E33\u865F",
+    description: "\u628A\u4E00\u500B\u672C\u6A5F skill \u8CC7\u6599\u593E(\u5167\u542B SKILL.md)\u4E0A\u50B3\u5230\u4F7F\u7528\u8005\u7684 SkillUp workspace,\u6210\u70BA\u65B0\u7248\u672C\u3002\u9810\u8A2D\u53EA\u56DE\u5831\u300C\u5C07\u6703\u4E0A\u50B3\u4EC0\u9EBC\u300D\u800C\u4E0D\u5BE6\u969B\u4E0A\u50B3;\u8981\u771F\u7684\u767C\u5E03\u5FC5\u9808\u5E36 confirm=true\u3002\u8ACB\u5148\u4E0D\u5E36 confirm \u547C\u53EB\u4E00\u6B21\u3001\u628A\u5167\u5BB9\u986F\u793A\u7D66\u4F7F\u7528\u8005\u78BA\u8A8D,\u5F97\u5230\u540C\u610F\u5F8C\u624D\u5E36 confirm=true\u3002",
+    inputSchema: {
+      dir: external_exports.string().describe("skill \u8CC7\u6599\u593E\u7684\u7D55\u5C0D\u8DEF\u5F91(\u88E1\u9762\u8981\u6709 SKILL.md)"),
+      confirm: external_exports.boolean().optional().describe("true \u624D\u6703\u5BE6\u969B\u4E0A\u50B3\u3002\u52D9\u5FC5\u5148\u8B93\u4F7F\u7528\u8005\u78BA\u8A8D\u8981\u767C\u5E03\u7684\u5167\u5BB9\u8207\u7248\u672C\u3002")
+    }
+  },
+  async ({ dir, confirm }) => {
+    const context = await buildAuthenticatedContext();
+    if (context === void 0) {
+      return text(NOT_LINKED);
+    }
+    try {
+      const preview = await context.publisher.preview(dir);
+      if (confirm !== true) {
+        const files = preview.files.map((file2) => `  \xB7 ${file2.path}(${file2.sizeBytes} bytes)`);
+        return text(
+          [
+            `\u6E96\u5099\u767C\u5E03(\u5C1A\u672A\u4E0A\u50B3\u4EFB\u4F55\u6771\u897F):`,
+            `  skill:${preview.name}`,
+            `  \u7248\u672C:${preview.version}`,
+            `  \u4F86\u6E90:${preview.sourceDir}`,
+            `  \u6A94\u6848:`,
+            ...files,
+            "",
+            "\u8ACB\u628A\u4EE5\u4E0A\u5167\u5BB9\u986F\u793A\u7D66\u4F7F\u7528\u8005\u78BA\u8A8D\u3002\u5F97\u5230\u540C\u610F\u5F8C,\u518D\u5E36 confirm=true \u547C\u53EB\u4E00\u6B21\u3002"
+          ].join("\n")
+        );
+      }
+      const result = await context.publisher.publish(dir);
+      return text(
+        [
+          `\u2714 \u5DF2\u767C\u5E03 ${preview.name} v${result.version}`,
+          `  skillId:${result.skillId}`,
+          `  versionId:${result.skillVersionId}`
+        ].join("\n")
+      );
+    } catch (error51) {
+      return text(`\u767C\u5E03\u5931\u6557:${describeError(error51)}`);
     }
   }
 );
