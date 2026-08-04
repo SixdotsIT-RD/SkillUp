@@ -12607,6 +12607,9 @@ function isRetryable(error51) {
   }
   return error51 instanceof Error && !(error51 instanceof CompanionApiError);
 }
+function isCredentialInvalid(error51) {
+  return error51 instanceof CompanionApiError && error51.status === 401 && error51.code !== "DEVICE_CREDENTIAL_REQUIRED";
+}
 function describeError(error51) {
   if (!(error51 instanceof CompanionApiError)) {
     return error51 instanceof Error ? error51.message : String(error51);
@@ -42695,85 +42698,93 @@ var TOOL_GUIDE = [
     purpose: "\u5217\u51FA SkillUp \u7684\u6240\u6709\u529F\u80FD(\u5C31\u662F\u9019\u4EFD\u8AAA\u660E)",
     say: "\u300CSkillUp \u6709\u54EA\u4E9B\u529F\u80FD\u300D",
     agentNote: "Lists every SkillUp tool in plain language. Works even when not linked",
-    writes: "none"
-  },
-  {
-    name: "skillup_login",
-    purpose: "\u628A\u9019\u53F0\u96FB\u8166\u9023\u7D50\u5230\u4F60\u7684 SkillUp \u5E33\u865F(\u6703\u958B\u700F\u89BD\u5668\u8ACB\u4F60\u6838\u51C6)",
-    say: "\u300C\u767B\u5165 SkillUp\u300D",
-    agentNote: "Opens the browser to connect this device to the user's account",
-    writes: "keychain"
+    effect: "read"
   },
   {
     name: "skillup_account",
     purpose: "\u67E5\u6211\u73FE\u5728\u767B\u5165\u7684\u662F\u54EA\u500B\u5E33\u865F\u3001\u6191\u8B49\u9084\u6709\u6C92\u6709\u6548",
     say: "\u300C\u6211\u767B\u5165\u7684\u662F\u54EA\u500B SkillUp \u5E33\u865F\u300D",
     agentNote: "Confirms the stored credential is still valid and reports the identity",
-    writes: "none"
+    effect: "read"
   },
   {
     name: "skillup_skills",
     purpose: "\u5217\u51FA\u4F60\u5E33\u865F\u88E1\u7684\u6240\u6709 skill,\u4EE5\u53CA\u54EA\u4E9B\u6709\u65B0\u7248",
     say: "\u300C\u6211\u6709\u54EA\u4E9B SkillUp skill\u300D",
     agentNote: "Lists the skills in the user's account and their status on this device",
-    writes: "none"
+    effect: "read"
   },
   {
     name: "skillup_status",
     purpose: "\u67E5\u9019\u53F0\u96FB\u8166\u4E0A\u88DD\u4E86\u54EA\u4E9B AI \u5DE5\u5177\u3001\u5404\u81EA\u88DD\u4E86\u4EC0\u9EBC skill",
     say: "\u300C\u6211\u9019\u53F0\u88DD\u4E86\u54EA\u4E9B skill\u300D",
     agentNote: "Shows which AI tools are installed locally and what is installed where",
-    writes: "none"
+    effect: "read"
+  },
+  {
+    name: "skillup_login",
+    purpose: "\u628A\u9019\u53F0\u96FB\u8166\u9023\u7D50\u5230\u4F60\u7684 SkillUp \u5E33\u865F(\u6703\u958B\u700F\u89BD\u5668\u8ACB\u4F60\u6838\u51C6)",
+    say: "\u300C\u767B\u5165 SkillUp\u300D",
+    agentNote: "Opens the browser to connect this device to the user's account",
+    effect: "browser"
+  },
+  {
+    name: "skillup_logout",
+    purpose: "\u4E2D\u65B7\u9019\u53F0\u96FB\u8166\u7684\u9023\u7D50:\u5411\u4F3A\u670D\u5668\u64A4\u92B7\u6191\u8B49,\u518D\u6E05\u6389\u672C\u6A5F\u90A3\u4EFD",
+    say: "\u300C\u767B\u51FA SkillUp\u300D",
+    agentNote: "Revokes this device's credential on the server, then clears it from the OS keychain. Installed skill files are left untouched",
+    effect: "confirm"
   },
   {
     name: "skillup_sync",
     purpose: "\u628A\u5F85\u5B89\u88DD/\u5F85\u66F4\u65B0\u7684 skill \u6293\u4E0B\u4F86\u88DD\u597D(\u4E5F\u6703\u4FEE\u5FA9\u88AB\u6539\u58DE\u6216\u907A\u5931\u7684)",
     say: "\u300C\u5E6B\u6211\u66F4\u65B0 skill\u300D",
     agentNote: "Downloads, verifies and installs pending skills (also repairs locally modified/missing copies)",
-    writes: "confirm"
+    effect: "confirm"
   },
   {
     name: "skillup_publish",
     purpose: "\u628A\u4F60\u81EA\u5DF1\u5BEB\u7684 skill \u4E0A\u50B3\u5230\u5E33\u865F,\u6210\u70BA\u4E00\u500B\u65B0\u7248\u672C",
     say: "\u300C\u628A\u9019\u500B\u8CC7\u6599\u593E\u767C\u5E03\u5230 SkillUp\u300D",
     agentNote: "Uploads a local skill folder to the user's account as a new version",
-    writes: "confirm"
+    effect: "confirm"
   },
   {
     name: "skillup_remove",
     purpose: "\u628A\u67D0\u500B skill \u5F9E\u9019\u53F0\u96FB\u8166\u4E0A\u5168\u90E8\u79FB\u9664",
     say: "\u300C\u628A xxx \u9019\u500B skill \u79FB\u9664\u300D",
     agentNote: "Deletes a skill from every local tool directory",
-    writes: "confirm"
+    effect: "confirm"
   }
 ];
 var TOOL_NAMES = TOOL_GUIDE.map((entry) => entry.name);
 function renderHelp() {
-  const readOnly = TOOL_GUIDE.filter((entry) => entry.writes !== "confirm");
-  const writing = TOOL_GUIDE.filter((entry) => entry.writes === "confirm");
+  const readOnly = TOOL_GUIDE.filter((entry) => entry.effect === "read");
+  const changing = TOOL_GUIDE.filter((entry) => entry.effect !== "read");
   const rows = (entries) => entries.map((entry) => `| \`${entry.name}\` | ${entry.purpose} | ${entry.say} |`).join("\n");
   return [
     "## SkillUp \u6307\u4EE4\u4E00\u89BD",
     "",
     "**\u4F60\u4E0D\u9700\u8981\u8A18\u9019\u4E9B\u6307\u4EE4\u540D** \u2014\u2014 \u76F4\u63A5\u7528\u6700\u53F3\u6B04\u7684\u8A71\u8DDF\u6211\u8AAA\u5C31\u884C,\u6211\u6703\u81EA\u5DF1\u9078\u5DE5\u5177\u3002",
     "",
-    // 標題刻意不寫「不會改動任何東西」—— skillup_login 會在鑰匙圈存憑證,
-    // 那樣寫是不誠實的。這一區真正的共同點是「不碰你的 skill 檔案」。
-    "### \u5E73\u5E38\u7528\u7684(\u4E0D\u6703\u6539\u52D5\u4F60\u7684 skill \u6A94\u6848)",
+    "### \u67E5\u8A62\u985E(\u4E0D\u6703\u6539\u52D5\u4EFB\u4F55\u6771\u897F)",
     "",
     "| \u6307\u4EE4 | \u505A\u4EC0\u9EBC | \u4F60\u53EF\u4EE5\u76F4\u63A5\u9019\u6A23\u8AAA |",
     "| --- | --- | --- |",
     rows(readOnly),
     "",
-    "### \u6703\u52D5\u5230\u6A94\u6848(\u4E00\u5B9A\u5148\u7D66\u4F60\u770B\u8A08\u756B,\u4F60\u540C\u610F\u624D\u505A)",
+    "### \u6703\u6539\u8B8A\u72C0\u614B(\u90FD\u6703\u5148\u8B93\u4F60\u78BA\u8A8D\u624D\u505A)",
     "",
     "| \u6307\u4EE4 | \u505A\u4EC0\u9EBC | \u4F60\u53EF\u4EE5\u76F4\u63A5\u9019\u6A23\u8AAA |",
     "| --- | --- | --- |",
-    rows(writing),
+    rows(changing),
     "",
-    "### \u5169\u4EF6\u8981\u77E5\u9053\u7684\u4E8B",
+    "`skillup_login` \u7684\u78BA\u8A8D\u662F\u5728\u700F\u89BD\u5668\u88E1\u6309\u6838\u51C6;\u5176\u4ED6\u5E7E\u500B\u6703\u5148\u628A\u8A08\u756B\u5217\u7D66\u4F60\u770B,\u4F60\u540C\u610F\u624D\u57F7\u884C\u3002",
     "",
-    "- **\u6191\u8B49\u5B58\u5728\u4F5C\u696D\u7CFB\u7D71\u7684\u9470\u5319\u5708**,\u4E0D\u662F\u7D14\u6587\u5B57\u6A94\u3002\u7DB2\u7AD9\u4E0A\u767B\u51FA\u4E0D\u6703\u8B93\u9019\u53F0\u96FB\u8166\u767B\u51FA\u3002",
+    "### \u4E09\u4EF6\u8981\u77E5\u9053\u7684\u4E8B",
+    "",
+    "- **\u6191\u8B49\u5B58\u5728\u4F5C\u696D\u7CFB\u7D71\u7684\u9470\u5319\u5708**,\u4E0D\u662F\u7D14\u6587\u5B57\u6A94\u3002",
+    "- **\u7DB2\u7AD9\u4E0A\u767B\u51FA\u4E0D\u6703\u8B93\u9019\u53F0\u96FB\u8166\u767B\u51FA**,\u8981\u65B7\u958B\u8ACB\u8AAA\u300C\u767B\u51FA SkillUp\u300D\u3002\u53CD\u904E\u4F86,\u767B\u51FA\u6703\u5411\u4F3A\u670D\u5668\u64A4\u92B7\u9019\u53F0\u6A5F\u5668\u7684\u6191\u8B49,\u5225\u53F0\u6A5F\u5668\u4E0D\u53D7\u5F71\u97FF\u3002",
     "- **\u4E00\u6B21\u540C\u6B65\u6DB5\u84CB\u6240\u6709 AI \u5DE5\u5177**:skill \u6703\u88DD\u9032\u9019\u53F0\u96FB\u8166\u4E0A\u5075\u6E2C\u5230\u7684\u6BCF\u500B\u5DE5\u5177\u3002"
   ].join("\n");
 }
@@ -42862,6 +42873,55 @@ tool(
       );
     } catch (error51) {
       return text(`\u7121\u6CD5\u78BA\u8A8D\u8EAB\u5206:${describeError(error51)}`);
+    }
+  }
+);
+tool(
+  "skillup_logout",
+  {
+    title: "\u767B\u51FA SkillUp(\u64A4\u92B7\u9019\u53F0\u88DD\u7F6E)",
+    description: "\u4E2D\u65B7\u9019\u53F0\u88DD\u7F6E\u8207 SkillUp \u5E33\u865F\u7684\u9023\u7D50:\u5148\u5411\u4F3A\u670D\u5668**\u64A4\u92B7**\u9019\u5F35\u88DD\u7F6E\u6191\u8B49,\u518D\u6E05\u9664\u672C\u6A5F\u5132\u5B58\u7684\u90A3\u4EFD\u3002\u5DF2\u5B89\u88DD\u7684 skill \u6A94\u6848\u4E0D\u6703\u88AB\u522A\u9664\u3002\u9810\u8A2D\u53EA\u56DE\u5831\u300C\u5C07\u8981\u4E2D\u65B7\u54EA\u500B\u5E33\u865F\u300D\u800C\u4E0D\u57F7\u884C;\u8981\u771F\u7684\u767B\u51FA\u5FC5\u9808\u5E36 confirm=true\u3002\u8ACB\u5148\u4E0D\u5E36 confirm \u547C\u53EB\u4E00\u6B21,\u628A\u7D50\u679C\u986F\u793A\u7D66\u4F7F\u7528\u8005\u78BA\u8A8D\u5F8C\u624D\u57F7\u884C\u3002",
+    inputSchema: {
+      confirm: external_exports.boolean().optional().describe("true \u624D\u6703\u5BE6\u969B\u64A4\u92B7\u4E26\u6E05\u9664\u6191\u8B49\u3002\u52D9\u5FC5\u5148\u8B93\u4F7F\u7528\u8005\u78BA\u8A8D\u3002")
+    }
+  },
+  async ({ confirm }) => {
+    const context = await buildAuthenticatedContext();
+    if (context === void 0) {
+      return text("\u9019\u53F0\u88DD\u7F6E\u672C\u4F86\u5C31\u6C92\u6709\u9023\u7D50\u4EFB\u4F55 SkillUp \u5E33\u865F,\u4E0D\u9700\u8981\u767B\u51FA\u3002");
+    }
+    if (confirm !== true) {
+      let who = "(\u7121\u6CD5\u53D6\u5F97,\u6191\u8B49\u53EF\u80FD\u5DF2\u5931\u6548)";
+      try {
+        const identity = await context.account.whoAmI(context.credential);
+        who = `${identity.email} / ${identity.workspaceName}`;
+      } catch {
+      }
+      return text(
+        [
+          "\u5C1A\u672A\u57F7\u884C\u4EFB\u4F55\u52D5\u4F5C\u3002\u767B\u51FA\u6703\u505A\u9019\u5169\u4EF6\u4E8B:",
+          `  1. \u5411\u4F3A\u670D\u5668\u64A4\u92B7\u9019\u53F0\u88DD\u7F6E\u7684\u6191\u8B49(\u5E33\u865F:${who})`,
+          "  2. \u6E05\u9664\u672C\u6A5F\u9470\u5319\u5708\u88E1\u7684\u90A3\u4EFD\u6191\u8B49",
+          "",
+          "\u5DF2\u5B89\u88DD\u7684 skill \u6A94\u6848**\u4E0D\u6703**\u88AB\u522A\u9664,\u5176\u4ED6\u88DD\u7F6E\u4E5F\u4E0D\u53D7\u5F71\u97FF\u3002",
+          "\u8981\u91CD\u65B0\u4F7F\u7528\u6642\u518D\u767B\u5165\u4E00\u6B21\u5373\u53EF\u3002",
+          "",
+          "\u78BA\u5B9A\u8981\u767B\u51FA\u7684\u8A71,\u8ACB\u5E36 confirm=true \u518D\u547C\u53EB\u4E00\u6B21\u3002"
+        ].join("\n")
+      );
+    }
+    try {
+      await context.unlinkDevice.execute();
+      return text("\u2714 \u5DF2\u5411\u4F3A\u670D\u5668\u64A4\u92B7\u6191\u8B49,\u4E26\u6E05\u9664\u672C\u6A5F\u5132\u5B58\u7684\u90A3\u4EFD\u3002\u5DF2\u5B89\u88DD\u7684 skill \u6A94\u6848\u4FDD\u7559\u3002");
+    } catch (error51) {
+      if (isCredentialInvalid(error51)) {
+        await context.unlinkDevice.execute(true);
+        return text("\u4F3A\u670D\u5668\u7AEF\u6191\u8B49\u65E9\u5DF2\u5931\u6548,\u5DF2\u76F4\u63A5\u6E05\u9664\u672C\u6A5F\u90A3\u4EFD\u3002\u9019\u53F0\u88DD\u7F6E\u73FE\u5728\u662F\u672A\u9023\u7D50\u72C0\u614B\u3002");
+      }
+      return text(
+        `\u64A4\u92B7\u5931\u6557,\u672C\u6A5F\u6191\u8B49**\u4FDD\u7559**:${describeError(error51)}
+\u9806\u5E8F\u662F\u523B\u610F\u7684 \u2014\u2014 \u82E5\u5148\u6E05\u672C\u6A5F\u518D\u64A4\u92B7\u5931\u6557,\u90A3\u5F35\u6191\u8B49\u6703\u6C38\u9060\u7559\u5728\u4F3A\u670D\u5668\u4E0A\u800C\u4F60\u518D\u4E5F\u64A4\u4E0D\u6389\u3002`
+      );
     }
   }
 );

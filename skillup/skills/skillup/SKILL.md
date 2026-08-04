@@ -19,16 +19,17 @@ Use these tools when the user:
 
 ## Tools
 
-| Tool | What it does | Writes files? |
+| Tool | What it does | Side effects |
 | --- | --- | --- |
-| `skillup_help` | Lists every SkillUp tool in plain language. Works even when not linked | No |
-| `skillup_login` | Opens the browser to connect this device to the user's account | No (stores a credential in the OS keychain) |
-| `skillup_account` | Confirms the stored credential is still valid and reports the identity | No |
-| `skillup_skills` | Lists the skills in the user's account and their status on this device | No |
-| `skillup_status` | Shows which AI tools are installed locally and what is installed where | No |
-| `skillup_sync` | Downloads, verifies and installs pending skills (also repairs locally modified/missing copies) | Yes — requires `confirm: true` |
-| `skillup_publish` | Uploads a local skill folder to the user's account as a new version | Yes — requires `confirm: true` |
-| `skillup_remove` | Deletes a skill from every local tool directory | Yes — requires `confirm: true` |
+| `skillup_help` | Lists every SkillUp tool in plain language. Works even when not linked | None — read-only |
+| `skillup_account` | Confirms the stored credential is still valid and reports the identity | None — read-only |
+| `skillup_skills` | Lists the skills in the user's account and their status on this device | None — read-only |
+| `skillup_status` | Shows which AI tools are installed locally and what is installed where | None — read-only |
+| `skillup_login` | Opens the browser to connect this device to the user's account | Opens the browser; stores a credential after the user approves there |
+| `skillup_logout` | Revokes this device's credential on the server, then clears it from the OS keychain. Installed skill files are left untouched | **Changes state — requires `confirm: true`** |
+| `skillup_sync` | Downloads, verifies and installs pending skills (also repairs locally modified/missing copies) | **Changes state — requires `confirm: true`** |
+| `skillup_publish` | Uploads a local skill folder to the user's account as a new version | **Changes state — requires `confirm: true`** |
+| `skillup_remove` | Deletes a skill from every local tool directory | **Changes state — requires `confirm: true`** |
 
 ## How to handle "not linked"
 
