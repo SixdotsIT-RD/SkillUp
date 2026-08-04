@@ -42189,6 +42189,7 @@ function readSkill(dir) {
 
 // src/infrastructure/companion-api/package.adapters.ts
 init_packages();
+init_errors();
 var CompanionPackageSource = class {
   constructor(baseUrl, credential) {
     this.baseUrl = baseUrl;
@@ -42407,14 +42408,56 @@ var CompanionPublisher = class {
       entrypoint: ENTRYPOINT,
       files: describeFiles(files)
     };
-    await precheckUpload(this.baseUrl, this.credential, manifest);
+    await this.guardVersionConflict(
+      () => precheckUpload(this.baseUrl, this.credential, manifest),
+      skill.version
+    );
     const idempotencyKey = stableKey(skillId, skill.version, manifest.files.map((f) => f.sha256).join(","));
-    const session = await createUploadSession(this.baseUrl, this.credential, manifest, idempotencyKey);
+    const session = await this.guardVersionConflict(
+      () => createUploadSession(this.baseUrl, this.credential, manifest, idempotencyKey),
+      skill.version
+    );
+    if (session.status === "completed") {
+      return {
+        skillId,
+        skillVersionId: session.skillVersionId ?? "",
+        version: skill.version,
+        created: false
+      };
+    }
     for (const file2 of files) {
-      await uploadOne(this.baseUrl, this.credential, session.uploadId, file2);
+      await this.guardVersionConflict(
+        () => uploadOne(this.baseUrl, this.credential, session.uploadId, file2),
+        skill.version
+      );
     }
     const done = await completeUpload(this.baseUrl, this.credential, session.uploadId);
-    return { skillId, skillVersionId: done.skillVersionId, version: skill.version };
+    return {
+      skillId,
+      skillVersionId: done.skillVersionId,
+      version: skill.version,
+      // replayed 代表 server 認出這是同一份東西,沿用了既有版本 —— 沒有建立新的。
+      created: done.replayed !== true
+    };
+  }
+  /**
+   * 把版本衝突的 409 翻成使用者看得懂的說明。
+   *
+   * server 回的是 `SKILL_VERSION_CONFLICT` / `SKILL_UPLOAD_NOT_WRITABLE` 這種代碼,
+   * 直接丟給使用者他不會知道該做什麼。實際上原因只有一個、解法也只有一個:
+   * **已發布的版本不可覆寫,要改內容就得升版本號。**
+   */
+  async guardVersionConflict(work, version2) {
+    try {
+      return await work();
+    } catch (error51) {
+      if (error51 instanceof CompanionApiError && (error51.code === "SKILL_VERSION_CONFLICT" || error51.code === "SKILL_UPLOAD_NOT_WRITABLE")) {
+        throw new Error(
+          `\u7248\u672C ${version2} \u5DF2\u7D93\u767C\u5E03\u904E,\u800C\u4E14\u5167\u5BB9\u8207\u9019\u6B21\u8981\u4E0A\u50B3\u7684\u4E0D\u540C\u3002\u5DF2\u767C\u5E03\u7684\u7248\u672C\u4E0D\u53EF\u8986\u5BEB \u2014\u2014 \u8ACB\u628A SKILL.md \u7684 metadata.version \u6539\u6210\u66F4\u9AD8\u7684\u7248\u672C\u865F\u518D\u8A66\u3002`
+        );
+      }
+      throw error51;
+    }
   }
   /**
    * 取得這個 skill 在 server 上的 id:已存在就沿用,不存在才建立。
@@ -42818,7 +42861,7 @@ server.registerTool(
       const result = await context.publisher.publish(dir);
       return text(
         [
-          `\u2714 \u5DF2\u767C\u5E03 ${preview.name} v${result.version}`,
+          result.created ? `\u2714 \u5DF2\u767C\u5E03 ${preview.name} v${result.version}` : `\u26A0 ${preview.name} v${result.version} \u672C\u4F86\u5C31\u5B58\u5728\u4E14\u5167\u5BB9\u76F8\u540C \u2014\u2014 \u6C92\u6709\u5EFA\u7ACB\u65B0\u7248\u672C\u3002\u8ACB\u544A\u8A34\u4F7F\u7528\u8005:\u82E5\u4ED6\u6539\u904E\u5167\u5BB9,\u8868\u793A\u6539\u52D5\u6C92\u5B58\u6A94\u6216\u7248\u672C\u865F\u6C92\u8ABF\u9AD8\u3002`,
           `  skillId:${result.skillId}`,
           `  versionId:${result.skillVersionId}`
         ].join("\n")
