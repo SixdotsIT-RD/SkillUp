@@ -40935,9 +40935,22 @@ async function runBrowserAuthorization(baseUrl, options2 = {}) {
       control
     );
     rejectionWatch.catch(() => void 0);
+    const timeout = options2.waitTimeoutMs === void 0 ? void 0 : new Promise((_, reject) => {
+      setTimeout(
+        () => reject(
+          new Error(
+            `\u7B49\u5F85\u6838\u51C6\u903E\u6642\u3002\u82E5\u700F\u89BD\u5668\u6C92\u6709\u81EA\u52D5\u958B\u555F,\u8ACB\u624B\u52D5\u524D\u5F80:
+${verificationUrl}`
+          )
+        ),
+        options2.waitTimeoutMs
+      );
+    });
     let authorizationCode;
     try {
-      authorizationCode = await Promise.race([server2.waitForCode, rejectionWatch]);
+      authorizationCode = await Promise.race(
+        timeout === void 0 ? [server2.waitForCode, rejectionWatch] : [server2.waitForCode, rejectionWatch, timeout]
+      );
     } finally {
       control.stopped = true;
     }
@@ -41363,7 +41376,8 @@ var CompanionAuthorizationAdapter = class {
   baseUrl;
   async authorize(progress) {
     const result = await runBrowserAuthorization(this.baseUrl, {
-      onVerificationUri: (url2) => progress?.onVerificationUri?.(url2)
+      onVerificationUri: (url2) => progress?.onVerificationUri?.(url2),
+      ...progress?.waitTimeoutMs === void 0 ? {} : { waitTimeoutMs: progress.waitTimeoutMs }
     });
     return {
       deviceId: result.deviceId,
@@ -42614,17 +42628,26 @@ function text(body) {
   return { content: [{ type: "text", text: body }] };
 }
 var NOT_LINKED = "\u9019\u53F0\u88DD\u7F6E\u5C1A\u672A\u9023\u7D50\u5230 SkillUp \u5E33\u865F\u3002\u8ACB\u547C\u53EB skillup_login \u5DE5\u5177\u9032\u884C\u9023\u7D50\u3002";
+var LOGIN_WAIT_MS = 1e5;
 var server = new McpServer({ name: "skillup", version: "0.1.0" });
 server.registerTool(
   "skillup_login",
   {
     title: "\u9023\u7D50 SkillUp \u5E33\u865F",
-    description: "\u628A\u9019\u53F0\u88DD\u7F6E\u9023\u7D50\u5230\u4F7F\u7528\u8005\u7684 SkillUp \u5E33\u865F\u3002\u6703\u958B\u555F\u7CFB\u7D71\u700F\u89BD\u5668\u8ACB\u4F7F\u7528\u8005\u767B\u5165\u4E26\u6838\u51C6;\u6838\u51C6\u5F8C\u6191\u8B49\u5B58\u5165\u4F5C\u696D\u7CFB\u7D71\u7684\u5B89\u5168\u5132\u5B58\u5340\u3002\u7576\u5176\u4ED6 SkillUp \u5DE5\u5177\u56DE\u5831\u300C\u5C1A\u672A\u9023\u7D50\u300D\u6642\u547C\u53EB\u9019\u500B\u3002"
+    description: "\u628A\u9019\u53F0\u88DD\u7F6E\u9023\u7D50\u5230\u4F7F\u7528\u8005\u7684 SkillUp \u5E33\u865F\u3002\u6703\u81EA\u52D5\u958B\u555F\u7CFB\u7D71\u700F\u89BD\u5668\u8ACB\u4F7F\u7528\u8005\u767B\u5165\u4E26\u6838\u51C6;\u6838\u51C6\u5F8C\u6191\u8B49\u5B58\u5165\u4F5C\u696D\u7CFB\u7D71\u7684\u5B89\u5168\u5132\u5B58\u5340\u3002\u7576\u5176\u4ED6 SkillUp \u5DE5\u5177\u56DE\u5831\u300C\u5C1A\u672A\u9023\u7D50\u300D\u6642\u547C\u53EB\u9019\u500B\u3002\u82E5\u56DE\u50B3\u5167\u5BB9\u542B\u6709\u6388\u6B0A\u7DB2\u5740,\u8ACB\u539F\u6A23\u986F\u793A\u7D66\u4F7F\u7528\u8005 \u2014\u2014 \u90A3\u4EE3\u8868\u700F\u89BD\u5668\u53EF\u80FD\u6C92\u958B\u8D77\u4F86,\u9700\u8981\u4ED6\u624B\u52D5\u524D\u5F80\u3002"
   },
   async () => {
+    let verificationUri;
     try {
       const context = await buildAnonymousContext();
-      const result = await context.linkDevice.execute();
+      const result = await context.linkDevice.execute({
+        // 瀏覽器開得起來時使用者用不到它;但在沙盒或無 GUI 的環境,
+        // `open` 會靜默失敗 —— 那時這個網址是唯一的出路。
+        onVerificationUri: (url2) => {
+          verificationUri = url2;
+        },
+        waitTimeoutMs: LOGIN_WAIT_MS
+      });
       return text(
         [
           `\u2714 \u5DF2\u9023\u7D50:${result.identity.email}`,
@@ -42634,7 +42657,16 @@ server.registerTool(
         ].join("\n")
       );
     } catch (error51) {
-      return text(`\u9023\u7D50\u5931\u6557:${describeError(error51)}`);
+      const lines = [`\u9023\u7D50\u5931\u6557:${describeError(error51)}`];
+      if (verificationUri !== void 0) {
+        lines.push(
+          "",
+          "\u6388\u6B0A\u8ACB\u6C42\u5DF2\u5EFA\u7ACB(10 \u5206\u9418\u5167\u6709\u6548)\u3002\u82E5\u700F\u89BD\u5668\u6C92\u6709\u81EA\u52D5\u958B\u555F,",
+          "\u8ACB\u628A\u4E0B\u9762\u7684\u7DB2\u5740\u8CBC\u5230\u700F\u89BD\u5668\u5B8C\u6210\u6838\u51C6,\u7136\u5F8C\u91CD\u65B0\u547C\u53EB skillup_login:",
+          verificationUri
+        );
+      }
+      return text(lines.join("\n"));
     }
   }
 );
