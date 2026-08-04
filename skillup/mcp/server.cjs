@@ -42389,15 +42389,34 @@ var CompanionPublisher = class {
         mediaType: file2.mediaType
       }))
     });
+    const serverLatest = await this.findServerLatest(skill.name).catch(() => void 0);
     return {
       name: skill.name,
       version: skill.version,
       sourceDir,
-      files: described.map((file2) => ({ path: file2.path, sizeBytes: file2.sizeBytes }))
+      files: described.map((file2) => ({ path: file2.path, sizeBytes: file2.sizeBytes })),
+      ...serverLatest === void 0 ? {} : {
+        serverLatestVersion: serverLatest.toString(),
+        risk: assessRisk(SemanticVersion.create(skill.version), serverLatest)
+      }
     };
   }
+  /** server 上這個 skill 的最新已發布版本;沒發布過則 undefined。 */
+  async findServerLatest(slug) {
+    const dto = (await fetchAllSkills(this.baseUrl, this.credential)).find(
+      (item) => item.slug === slug
+    );
+    const raw = dto?.latestPublishedVersion?.version;
+    return raw === void 0 ? void 0 : SemanticVersion.create(raw);
+  }
   async publish(sourceDir) {
-    await this.preview(sourceDir);
+    const preview = await this.preview(sourceDir);
+    if (preview.risk === "not-advancing") {
+      throw new Error(
+        `server \u4E0A\u5DF2\u7D93\u6709 v${preview.serverLatestVersion},\u4F60\u8981\u767C\u5E03\u7684\u662F v${preview.version} \u2014\u2014 \u7248\u672C\u865F\u5FC5\u9808\u6BD4\u5B83\u9AD8\u3002
+\u26A0\uFE0F \u8ACB\u5148\u78BA\u8A8D\u4F60\u7684\u4FEE\u6539\u662F\u57FA\u65BC v${preview.serverLatestVersion},\u5426\u5247\u767C\u5E03\u5F8C\u90A3\u500B\u7248\u672C\u7684\u5167\u5BB9\u6703\u88AB\u84CB\u6389\u3002`
+      );
+    }
     const skill = readSkill(sourceDir);
     const files = await collectFiles(sourceDir);
     const skillId = await this.resolveSkillId(sourceDir, skill);
@@ -42486,6 +42505,9 @@ var CompanionPublisher = class {
     return created.skill.id;
   }
 };
+function assessRisk(publishing, serverLatest) {
+  return publishing.isAfter(serverLatest) ? "may-overwrite" : "not-advancing";
+}
 async function collectFiles(root) {
   const files = [];
   async function walk(dir, prefix) {
@@ -42845,14 +42867,26 @@ server.registerTool(
       const preview = await context.publisher.preview(dir);
       if (confirm !== true) {
         const files = preview.files.map((file2) => `  \xB7 ${file2.path}(${file2.sizeBytes} bytes)`);
+        const risk = preview.risk === "not-advancing" ? [
+          "",
+          `\u274C \u7121\u6CD5\u767C\u5E03:server \u4E0A\u5DF2\u7D93\u6709 v${preview.serverLatestVersion},\u7248\u672C\u865F\u5FC5\u9808\u66F4\u9AD8\u3002`,
+          `\u8ACB\u63D0\u9192\u4F7F\u7528\u8005:\u4E5F\u8981\u5148\u78BA\u8A8D\u4FEE\u6539\u662F\u57FA\u65BC v${preview.serverLatestVersion},\u5426\u5247\u6703\u84CB\u6389\u90A3\u4E00\u7248\u7684\u5167\u5BB9\u3002`
+        ] : preview.risk === "may-overwrite" ? [
+          "",
+          `\u26A0\uFE0F server \u4E0A\u76EE\u524D\u6700\u65B0\u662F v${preview.serverLatestVersion}\u3002`,
+          `\u8ACB**\u660E\u78BA\u8A62\u554F\u4F7F\u7528\u8005**:\u4ED6\u7684\u4FEE\u6539\u662F\u4E0D\u662F\u57FA\u65BC v${preview.serverLatestVersion}?`,
+          `\u82E5\u4E0D\u662F,\u90A3\u4E00\u7248\u7684\u4FEE\u6539\u6703\u6D88\u5931\u4E14\u4E0D\u6703\u6709\u4EFB\u4F55\u63D0\u793A \u2014\u2014 \u5EFA\u8B70\u5148\u540C\u6B65\u518D\u5408\u4F75\u3002`
+        ] : [];
         return text(
           [
             `\u6E96\u5099\u767C\u5E03(\u5C1A\u672A\u4E0A\u50B3\u4EFB\u4F55\u6771\u897F):`,
             `  skill:${preview.name}`,
             `  \u7248\u672C:${preview.version}`,
+            `  server \u6700\u65B0:${preview.serverLatestVersion ?? "(\u5C1A\u672A\u767C\u5E03\u904E)"}`,
             `  \u4F86\u6E90:${preview.sourceDir}`,
             `  \u6A94\u6848:`,
             ...files,
+            ...risk,
             "",
             "\u8ACB\u628A\u4EE5\u4E0A\u5167\u5BB9\u986F\u793A\u7D66\u4F7F\u7528\u8005\u78BA\u8A8D\u3002\u5F97\u5230\u540C\u610F\u5F8C,\u518D\u5E36 confirm=true \u547C\u53EB\u4E00\u6B21\u3002"
           ].join("\n")
