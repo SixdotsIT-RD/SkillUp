@@ -15,13 +15,15 @@ Use these tools when the user:
 - wants to log in / connect this device to SkillUp
 - asks whether any of their skills have updates
 - asks which AI tools on this machine have a given skill installed
+- **asks what SkillUp can do, or seems unsure where to start** → call `skillup_help`
 
 ## Tools
 
 | Tool | What it does | Writes files? |
 | --- | --- | --- |
+| `skillup_help` | Lists every SkillUp tool in plain language. Works even when not linked | No |
 | `skillup_login` | Opens the browser to connect this device to the user's account | No (stores a credential in the OS keychain) |
-| `skillup_whoami` | Confirms the stored credential is still valid | No |
+| `skillup_account` | Confirms the stored credential is still valid and reports the identity | No |
 | `skillup_skills` | Lists the skills in the user's account and their status on this device | No |
 | `skillup_status` | Shows which AI tools are installed locally and what is installed where | No |
 | `skillup_sync` | Downloads, verifies and installs pending skills (also repairs locally modified/missing copies) | Yes — requires `confirm: true` |
